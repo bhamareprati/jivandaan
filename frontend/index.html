@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0F172A" />
+    <meta name="description" content="Jivandan - a real-time blood donation and inventory network connecting donors, blood banks and hospitals." />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+    <!--
+      Content Security Policy.
+
+      A meta CSP is a defence-in-depth backstop, not the primary control - serve
+      the same policy as a response header from your host (see frontend/README).
+      `connect-src 'self'` assumes the API is same-origin (the Vite dev proxy,
+      or a rewrite in production). If you deploy the API on another host, add
+      that origin here AND in the header, and nowhere else.
+
+      'unsafe-inline' on style-src is required by Framer Motion and Recharts,
+      which set inline styles. Scripts get no such exemption.
+
+      frame-ancestors is deliberately absent here -- browsers ignore it when it
+      arrives via <meta>. Set it (and X-Frame-Options) as a real header; the
+      clickjacking defence has to come from the host, not this tag.
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+        default-src 'self';
+        script-src 'self';
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+        font-src 'self' https://fonts.gstatic.com;
+        img-src 'self' data: blob: https://*.tile.openstreetmap.org;
+        connect-src 'self';
+        media-src 'self' blob:;
+        worker-src 'self' blob:;
+        object-src 'none';
+        base-uri 'self';
+        form-action 'self';
+        upgrade-insecure-requests;
+      "
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <meta name="copyright" content="© anilratn 2026" />
+
+    <title>Jivandan - Blood Donation Network</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>Jivandan needs JavaScript enabled to run.</noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

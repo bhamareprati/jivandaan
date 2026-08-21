@@ -1,0 +1,28 @@
+# --- dependencies -----------------------------------------------------------
+node_modules/
+
+# --- build output -----------------------------------------------------------
+dist/
+build/
+*.tsbuildinfo
+
+# --- environment ------------------------------------------------------------
+# Real credentials never enter the repo. The .example files are the contract:
+# they list every key with a safe placeholder value.
+.env
+.env.*
+!.env.example
+
+# --- source blueprints ------------------------------------------------------
+# The Word documents the build was specified from. Kept out of the repo; the
+# markdown in docs/ is the version that belongs under review.
+*.docx
+
+# --- logs, os, editors ------------------------------------------------------
+*.log
+npm-debug.log*
+yarn-error.log*
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,190 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --surface: 255 255 255;
+    --surface-raised: 255 255 255;
+    --surface-sunken: 248 245 246;
+    --ink: 15 23 42;
+    --ink-muted: 92 82 86;
+    --line: 231 226 228;
+
+    --glass-bg: 255 255 255 / 0.85;
+    --glass-border: 255 255 255 / 0.55;
+  }
+
+  .dark {
+    --surface: 15 23 42;
+    --surface-raised: 22 32 58;
+    --surface-sunken: 10 16 30;
+    --ink: 241 245 249;
+    --ink-muted: 156 163 175;
+    --line: 30 42 71;
+
+    --glass-bg: 22 32 58 / 0.72;
+    --glass-border: 255 255 255 / 0.14;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-[rgb(var(--surface-sunken))] font-body text-base text-[rgb(var(--ink))] antialiased;
+    /* Never let a horizontal scrollbar appear from an overflowing dashboard. */
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5 {
+    @apply font-display font-semibold;
+    text-wrap: balance;
+  }
+
+  /* Doc 1 section 2.2: stats must not jitter as live numbers update. */
+  .tabular, [data-stat] {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Never `outline: none`. Every interactive element keeps a visible ring. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-crimson ring-offset-2 ring-offset-[rgb(var(--surface-sunken))];
+  }
+
+  ::selection {
+    @apply bg-crimson/25;
+  }
+
+  /* Firefox scrollbar */
+  * {
+    scrollbar-color: rgb(var(--line)) transparent;
+    scrollbar-width: thin;
+  }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-pill bg-[rgb(var(--line))];
+  }
+}
+
+@layer components {
+  /**
+   * Glassmorphism (Doc 1 section 2.4).
+   *
+   * FLOATING SURFACES ONLY: modals, the sticky nav once scrolled, toasts, and
+   * the landing hero's floating panel. Applying this to ordinary cards is
+   * exactly what makes glassmorphism look cheap. Ordinary cards use `.surface`.
+   */
+  .glass {
+    background: rgb(var(--glass-bg));
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid rgb(var(--glass-border));
+    @apply shadow-glass;
+  }
+
+  /* The default: a solid, opaque card. */
+  .surface {
+    @apply rounded-card border border-[rgb(var(--line))] bg-[rgb(var(--surface-raised))] shadow-soft;
+  }
+
+  .muted {
+    @apply text-[rgb(var(--ink-muted))];
+  }
+
+  /* The rich, non-flat backdrop glass needs in order to have something to blur. */
+  .mesh-backdrop {
+    background-image:
+      radial-gradient(60% 55% at 12% 8%, rgba(230, 57, 70, 0.52) 0%, transparent 60%),
+      radial-gradient(50% 50% at 88% 12%, rgba(128, 0, 32, 0.58) 0%, transparent 62%),
+      radial-gradient(55% 60% at 72% 92%, rgba(217, 4, 41, 0.38) 0%, transparent 60%),
+      radial-gradient(45% 45% at 22% 88%, rgba(42, 157, 143, 0.28) 0%, transparent 58%);
+  }
+
+  /* Sections that sit over the page-wide backdrop. Opaque section fills would
+     hide the drift entirely, so they become a veil instead: enough body to keep
+     text at full contrast, sheer enough that the gradient still moves behind. */
+  /* One page width, shared by every landing section so their left and right
+     edges line up. max-w-7xl (1280px) left ~300px of dead gutter on a 1900px
+     display; this keeps a comfortable measure without stranding the sides. */
+  .shell {
+    @apply mx-auto w-full max-w-[1600px] px-6 sm:px-8 lg:px-12;
+  }
+
+  .surface-veil {
+    background-color: rgb(var(--surface) / 0.55);
+    backdrop-filter: blur(12px);
+  }
+
+  .skeleton {
+    @apply rounded-lg bg-[rgb(var(--line))];
+    background-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgb(var(--surface-raised) / 0.85) 50%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    @apply animate-shimmer;
+  }
+}
+
+/**
+ * Reduced motion (Doc 1 section 2.3, Doc 4 section 4.2).
+ *
+ * Framer Motion is handled separately by <MotionConfig reducedMotion="user">
+ * and the 3D scene checks the same query in JS. This covers everything driven
+ * by CSS: the urgency pulse, the gradient drift, the ticker, and shimmers.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .skeleton {
+    background-image: none;
+  }
+}
+
+/**
+ * Theme the scrollbar.
+ *
+ * Full-bleed bands (the burgundy CTA, the footer) stop at the scrollbar, so an
+ * unstyled light gutter reads as a gap in the section rather than as browser
+ * chrome. color-scheme also fixes the form controls and the overscroll flash.
+ */
+:root {
+  color-scheme: dark;
+  scrollbar-color: rgb(var(--line)) rgb(var(--surface-sunken));
+  scrollbar-width: thin;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: rgb(var(--surface-sunken));
+}
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--line));
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--ink-muted) / 0.5);
+}
+
+/* Leaflet needs its container sized explicitly, and its default z-index sits
+   above our sticky nav. */
+.leaflet-container {
+  @apply h-full w-full rounded-card bg-[rgb(var(--surface-sunken))];
+  z-index: 0;
+}
+.leaflet-control-attribution {
+  @apply !bg-[rgb(var(--surface-raised))]/80 !text-xs;
+  color: rgb(var(--ink-muted)) !important;
+}

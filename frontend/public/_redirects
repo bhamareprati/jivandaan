@@ -1,0 +1,2 @@
+# SPA fallback so deep links like /request/:id/track resolve on reload.
+/*  /index.html  200
